@@ -132,19 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Most image super-resolution (SR) models trained on natural images achieve strong performance on benchmark datasets. However, their performance degrades 
-            when applied to unseen domains whose semantic content or degradation types differ substantially. A common remedy is class-driven adaptation, which fine-tunes 
-            model per manually defined class (either a semantic category or a degradation type), but this approach is subjective, data-hungry and often causes 
-            catastrophic forgetting of previously learned domains.
-            To address these challenges, we propose \emph{MoLE-SR} (Mixture of LoRA Experts for Super-Resolution), a representation-driven universal SR framework that 
-            achieves efficient few-shot adaptation to unseen (out-of-training) domains while preserving performance on seen (in-training) domains. MoLE-SR adopts a 
-            decoupled two-stage learning strategy. In Stage~1, a shared SR backbone is combined with multiple lightweight LoRA experts, each trained separately on 
-            representative in-training domains to learn domain-specific average representation, yielding notable performance gains with only a small fraction of 
-            parameters updated. In Stage~2, given only a few samples from an out-of-training domain, all experts remain fixed while a compact layer-wise router is 
-            optimized to dynamically select and compose experts under the guidance of samples' representations, enabling effective adaptation with negligible 
-            additional parameter overhead.
-            Extensive experiments across diverse SR architectures and a wide range of out-of-training domains demonstrate that MoLE-SR preserves in-training-domain 
-            performance without degradation, substantially improves transferability in few-shot settings with minimal extra data and computation.
+            Most image super-resolution (SR) models trained on natural images achieve strong performance on benchmark datasets. However, their performance degrades when applied to unseen data whose semantic content or degradation types differ substantially. A common remedy is class-driven adaptation, which fully fine-tunes model per manually defined class with either a semantic category or a degradation type, but this approach is typically training-expensive, data-hungry and often causes catastrophic forgetting of previously learned domains.
+To address these challenges, we propose MoLE-SR (Mixture of LoRA Experts for Super-Resolution), a representation-driven universal SR framework with high training efficiency and data efficiency. MoLE-SR realizes few-shot adaptation to unseen domains while preserving performance on seen domains, by adopting a decoupled two-stage learning strategy. Specifically, in the first stage, a shared SR backbone is combined with multiple lightweight LoRA experts, each trained separately on representative in-training domains to learn domain-specific representation, yielding notable performance gains with only a small fraction (~1.5\%) of parameters updated. In the second stage, given only a few samples from an out-of-training domain, all experts remain fixed while an efficient layer-wise router is optimized to dynamically select and compose experts under the guidance of samples' representations, enabling effective adaptation with negligible (~1.9\%) additional parameter overhead.
+Extensive experiments across diverse SR architectures and out-of-training domains demonstrate that MoLE-SR achieves an average PSNR improvement of 0.79 dB in in-training domain performance and 0.93 dB on out-of-training domain data under few-shot settings with minimal extra data and computation.
           </p>
         </div>
       </div>
