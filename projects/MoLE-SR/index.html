@@ -137,14 +137,14 @@
   let currentBaseline = 'EDSR';
   let currentCase = 'case1';
 
-  const caseList = ['case1', 'case2', 'case3', 'case4', 'case5']; // 案例列表
+  const caseList = ['case1', 'case2', 'case3', 'case4']; // 案例列表
 
   /**
    * 初始化滑块对比
    */
   function initSlider(baseline, caseName) {
     const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
-    const hrPath = `./static/images/${baseline}/after/#{baseline}_${caseName}_after.png`;
+    const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
 
     document.getElementById('juxtapose-slider').innerHTML = '';
 
