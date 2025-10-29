@@ -66,26 +66,24 @@
 
     <div class="comparison-wrapper" style="display:flex; justify-content:center; align-items:flex-start; gap:20px; flex-wrap:wrap;">
 
-      <!-- 左侧Baseline按钮列 -->
-      <div class="baseline-bar" style="display:flex; flex-direction:column; gap:8px; width:80px;">
+      <!-- 左侧 Baseline 按钮列 -->
+      <div class="baseline-bar" style="display:flex; flex-direction:column; gap:10px; width:110px;">
         <button class="baseline-btn active" data-model="EDSR">EDSR</button>
         <button class="baseline-btn" data-model="RDN">RDN</button>
         <button class="baseline-btn" data-model="ATD">ATD</button>
         <button class="baseline-btn" data-model="PFT">PFT</button>
       </div>
 
-      <!-- 右侧滑块 -->
+      <!-- 右侧滑块容器 -->
       <div style="flex:1; display:flex; justify-content:center;">
-        <div id="juxtapose-slider" style="width:100%; max-width:500px;"></div>
+        <div id="slider-container">
+          <div id="juxtapose-slider" style="width:100%; max-width:500px;"></div>
+        </div>
       </div>
-
     </div>
 
     <!-- 缩略图栏 -->
-    <div id="thumb-bar" class="thumb-bar" style="display:flex; justify-content:center; margin-top:15px; gap:8px; flex-wrap:wrap;">
-      <!-- 缩略图会由JS自动生成 -->
-    </div>
-
+    <div id="thumb-bar" class="thumb-bar" style="display:flex; justify-content:center; margin-top:15px; gap:10px; flex-wrap:wrap;"></div>
   </div>
 </section>
 
@@ -94,113 +92,110 @@
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
 <style>
-  /* 紧凑按钮样式 */
+  /* 按钮样式改进 */
   .baseline-btn {
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
-    padding: 6px 8px;
-    font-size: 13px;
+    border: none;
+    background-color: #e5e9f2;
+    padding: 10px 12px;
+    font-size: 14px;
     cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    transition: all 0.25s ease;
     text-align: center;
+    font-weight: 600;
+    color: #333;
   }
   .baseline-btn:hover {
-    background-color: #e8e8e8;
+    background-color: #d7dcf0;
   }
   .baseline-btn.active {
     background-color: #3273dc;
-    color: white;
-    border-color: #3273dc;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(50,115,220,0.3);
   }
 
   /* 缩略图样式 */
   .thumb-bar img {
     width: 100px;
     height: 100px;
-    object-fit: cover;     /* 保持比例填满，必要时裁剪 */
+    object-fit: cover;
     border: 2px solid transparent;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: border-color 0.2s ease;
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
   .thumb-bar img.active {
     border-color: #3273dc;
+    transform: scale(1.05);
   }
   .thumb-bar img:hover {
-    border-color: #ccc;
+    border-color: #999;
   }
 </style>
 
 <script>
-  // 当前选中的baseline和case
   let currentBaseline = 'EDSR';
   let currentCase = 'case1';
+  const caseList = ['case1', 'case2', 'case3', 'case4'];
 
-  const caseList = ['case1', 'case2', 'case3', 'case4']; // 案例列表
-
-  /**
-   * 初始化滑块对比
-   */
   function initSlider(baseline, caseName) {
     const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
     const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
 
-    document.getElementById('juxtapose-slider').innerHTML = '';
+    const sliderContainer = document.getElementById('slider-container');
+    sliderContainer.replaceChildren(); // 确保彻底清空
 
-    new juxtapose.JXSlider('#juxtapose-slider',
-      [
-        { src: lqPath, label: 'Zoomed LQ images', credit: '' },
-        { src: hrPath, label: `${baseline} results`, credit: '' }
-      ],
-      {
-        animate: true,
-        showLabels: true,
-        showCredits: false,
-        startingPosition: "50%",
-        makeResponsive: true
-      }
-    );
+    const newDiv = document.createElement('div');
+    newDiv.id = 'juxtapose-slider';
+    newDiv.style.width = '100%';
+    newDiv.style.maxWidth = '500px';
+    sliderContainer.appendChild(newDiv);
+
+    new juxtapose.JXSlider('#juxtapose-slider', [
+      { src: lqPath, label: 'Low Quality', credit: '' },
+      { src: hrPath, label: `${baseline} Result`, credit: '' }
+    ], {
+      animate: true,
+      showLabels: true,
+      showCredits: false,
+      startingPosition: "50%",
+      makeResponsive: true
+    });
   }
 
-  /**
-   * 根据当前baseline生成缩略图栏
-   */
   function renderThumbnails(baseline) {
-    const thumbContainer = document.getElementById('thumb-bar');
-    thumbContainer.innerHTML = '';
+    const container = document.getElementById('thumb-bar');
+    container.innerHTML = '';
 
     caseList.forEach(caseName => {
       const img = document.createElement('img');
-      img.src = `./static/images/${baseline}/before/${caseName}.png`;
+      // 修正路径命名
+      img.src = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
       img.dataset.case = caseName;
-      if (caseName === currentCase) {
-        img.classList.add('active');
-      }
+
+      if (caseName === currentCase) img.classList.add('active');
+
       img.addEventListener('click', () => {
-        // 点击时切换当前case
         currentCase = caseName;
         document.querySelectorAll('#thumb-bar img').forEach(t => t.classList.remove('active'));
         img.classList.add('active');
         initSlider(currentBaseline, currentCase);
       });
-      thumbContainer.appendChild(img);
+
+      container.appendChild(img);
     });
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    // 初始渲染
     renderThumbnails(currentBaseline);
     initSlider(currentBaseline, currentCase);
 
-    // 切换baseline按钮点击事件
     document.querySelectorAll('.baseline-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentBaseline = btn.dataset.model;
 
-        // 切换baseline时重置缩略图和滑块
+        currentBaseline = btn.dataset.model;
         renderThumbnails(currentBaseline);
         initSlider(currentBaseline, currentCase);
       });
