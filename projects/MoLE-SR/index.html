@@ -60,66 +60,154 @@
   </div>
 </section>
 
-<!-- Interactive Visualization (JuxtaposeJS Slider) -->
 <section class="section">
-  <div class="container is-max-desktop has-text-centered">
-    <h2 class="title is-3">Interactive Super-Resolution Comparison</h2>
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
 
-    <!-- JuxtaposeJS container -->
-    <div id="juxtapose-slider" style="max-width:500px; margin:0 auto;"></div>
+    <div class="comparison-wrapper" style="display:flex; justify-content:center; align-items:flex-start; gap:20px; flex-wrap:wrap;">
 
-    <!-- Thumbnail selection bar -->
-    <div class="thumb-bar" style="display:flex; justify-content:center; margin-top:15px; gap:8px;">
-      <img src="./static/thumbs/case1.png" data-lq="./static/LR/case1.png" data-hr="./static/HR/case1.png" class="active" style="width:90px; height:70px; cursor:pointer; border:2px solid #3273dc;">
-      <img src="./static/thumbs/case2.png" data-lq="./static/LR/case2.png" data-hr="./static/HR/case2.png" style="width:90px; height:70px; cursor:pointer;">
-      <img src="./static/thumbs/case3.png" data-lq="./static/LR/case3.png" data-hr="./static/HR/case3.png" style="width:90px; height:70px; cursor:pointer;">
-      <img src="./static/thumbs/case4.png" data-lq="./static/LR/case4.png" data-hr="./static/HR/case4.png" style="width:90px; height:70px; cursor:pointer;">
-      <img src="./static/thumbs/case5.png" data-lq="./static/LR/case5.png" data-hr="./static/HR/case5.png" style="width:90px; height:70px; cursor:pointer;">
+      <!-- 左侧Baseline按钮列 -->
+      <div class="baseline-bar" style="display:flex; flex-direction:column; gap:8px; width:80px;">
+        <button class="baseline-btn active" data-model="EDSR">EDSR</button>
+        <button class="baseline-btn" data-model="RDN">RDN</button>
+        <button class="baseline-btn" data-model="ATD">ATD</button>
+        <button class="baseline-btn" data-model="PFT">PFT</button>
+      </div>
+
+      <!-- 右侧滑块 -->
+      <div style="flex:1; display:flex; justify-content:center;">
+        <div id="juxtapose-slider" style="width:100%; max-width:500px;"></div>
+      </div>
+
     </div>
+
+    <!-- 缩略图栏 -->
+    <div id="thumb-bar" class="thumb-bar" style="display:flex; justify-content:center; margin-top:15px; gap:8px; flex-wrap:wrap;">
+      <!-- 缩略图会由JS自动生成 -->
+    </div>
+
   </div>
 </section>
 
-<!-- JuxtaposeJS resources -->
+<!-- JuxtaposeJS -->
 <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
+<style>
+  /* 紧凑按钮样式 */
+  .baseline-btn {
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    padding: 6px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .baseline-btn:hover {
+    background-color: #e8e8e8;
+  }
+  .baseline-btn.active {
+    background-color: #3273dc;
+    color: white;
+    border-color: #3273dc;
+  }
+
+  /* 缩略图样式 */
+  .thumb-bar img {
+    width: 90px;
+    height: 70px;
+    object-fit: cover;     /* 保持比例填满，必要时裁剪 */
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .thumb-bar img.active {
+    border-color: #3273dc;
+  }
+  .thumb-bar img:hover {
+    border-color: #ccc;
+  }
+</style>
+
 <script>
-function initSlider(lqPath, hrPath) {
-  // 清空之前的滑块
-  document.getElementById('juxtapose-slider').innerHTML = '';
+  // 当前选中的baseline和case
+  let currentBaseline = 'EDSR';
+  let currentCase = 'case1';
 
-  // 创建新的滑块
-  new juxtapose.JXSlider('#juxtapose-slider',
-    [
-      { src: lqPath, label: 'Zoomed LQ images', credit: '' },
-      { src: hrPath, label: 'Ours results', credit: '' }
-    ],
-    {
-      animate: true,
-      showLabels: true,
-      showCredits: false,
-      startingPosition: "50%",
-      makeResponsive: true
-    }
-  );
-}
+  const caseList = ['case1', 'case2', 'case3', 'case4', 'case5']; // 案例列表
 
-// 初始化第一个案例
-document.addEventListener('DOMContentLoaded', function() {
-  const firstThumb = document.querySelector('.thumb-bar img.active');
-  initSlider(firstThumb.dataset.lq, firstThumb.dataset.hr);
+  /**
+   * 初始化滑块对比
+   */
+  function initSlider(baseline, caseName) {
+    const lqPath = `./static/images/${baseline}/before/${caseName}.png`;
+    const hrPath = `./static/images/${baseline}/after/${caseName}.png`;
 
-  // 点击切换图集
-  document.querySelectorAll('.thumb-bar img').forEach(img => {
-    img.addEventListener('click', function() {
-      document.querySelectorAll('.thumb-bar img').forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      this.style.borderColor = '#3273dc';
-      initSlider(this.dataset.lq, this.dataset.hr);
+    document.getElementById('juxtapose-slider').innerHTML = '';
+
+    new juxtapose.JXSlider('#juxtapose-slider',
+      [
+        { src: lqPath, label: 'Zoomed LQ images', credit: '' },
+        { src: hrPath, label: `${baseline} results`, credit: '' }
+      ],
+      {
+        animate: true,
+        showLabels: true,
+        showCredits: false,
+        startingPosition: "50%",
+        makeResponsive: true
+      }
+    );
+  }
+
+  /**
+   * 根据当前baseline生成缩略图栏
+   */
+  function renderThumbnails(baseline) {
+    const thumbContainer = document.getElementById('thumb-bar');
+    thumbContainer.innerHTML = '';
+
+    caseList.forEach(caseName => {
+      const img = document.createElement('img');
+      img.src = `./static/images/${baseline}/before/${caseName}.png`;
+      img.dataset.case = caseName;
+      if (caseName === currentCase) {
+        img.classList.add('active');
+      }
+      img.addEventListener('click', () => {
+        // 点击时切换当前case
+        currentCase = caseName;
+        document.querySelectorAll('#thumb-bar img').forEach(t => t.classList.remove('active'));
+        img.classList.add('active');
+        initSlider(currentBaseline, currentCase);
+      });
+      thumbContainer.appendChild(img);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // 初始渲染
+    renderThumbnails(currentBaseline);
+    initSlider(currentBaseline, currentCase);
+
+    // 切换baseline按钮点击事件
+    document.querySelectorAll('.baseline-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentBaseline = btn.dataset.model;
+
+        // 切换baseline时重置缩略图和滑块
+        renderThumbnails(currentBaseline);
+        initSlider(currentBaseline, currentCase);
+      });
     });
   });
-});
 </script>
+
 
 
 
