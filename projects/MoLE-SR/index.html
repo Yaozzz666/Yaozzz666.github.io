@@ -116,8 +116,8 @@
 
   /* 缩略图样式 */
   .thumb-bar img {
-    width: 90px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;     /* 保持比例填满，必要时裁剪 */
     border: 2px solid transparent;
     border-radius: 4px;
@@ -143,8 +143,8 @@
    * 初始化滑块对比
    */
   function initSlider(baseline, caseName) {
-    const lqPath = `./static/images/${baseline}/before/${caseName}.png`;
-    const hrPath = `./static/images/${baseline}/after/${caseName}.png`;
+    const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
+    const hrPath = `./static/images/${baseline}/after/#{baseline}_${caseName}_after.png`;
 
     document.getElementById('juxtapose-slider').innerHTML = '';
 
