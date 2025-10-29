@@ -141,26 +141,26 @@
   function initSlider(baseline, caseName) {
     const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
     const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
-
-    const sliderContainer = document.getElementById('slider-container');
-    sliderContainer.replaceChildren(); // 确保彻底清空
-
-    const newDiv = document.createElement('div');
-    newDiv.id = 'juxtapose-slider';
-    newDiv.style.width = '100%';
-    newDiv.style.maxWidth = '500px';
-    sliderContainer.appendChild(newDiv);
-
-    new juxtapose.JXSlider('#juxtapose-slider', [
-      { src: lqPath, label: 'Low Quality', credit: '' },
-      { src: hrPath, label: `${baseline} Result`, credit: '' }
-    ], {
-      animate: true,
-      showLabels: true,
-      showCredits: false,
-      startingPosition: "50%",
-      makeResponsive: true
-    });
+  
+    const sliderEl = document.getElementById('juxtapose-slider');
+    sliderEl.innerHTML = ''; // 保留DOM，只清空内部
+  
+    // 延迟一点点再初始化，确保DOM和资源准备好
+    setTimeout(() => {
+      new juxtapose.JXSlider('#juxtapose-slider',
+        [
+          { src: lqPath, label: 'Zoomed LQ images', credit: '' },
+          { src: hrPath, label: `${baseline} results`, credit: '' }
+        ],
+        {
+          animate: true,
+          showLabels: true,
+          showCredits: false,
+          startingPosition: '50%',
+          makeResponsive: true
+        }
+      );
+    }, 50);
   }
 
   function renderThumbnails(baseline) {
