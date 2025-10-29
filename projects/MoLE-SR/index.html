@@ -62,12 +62,11 @@
 
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
+    <!-- <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2> -->
 
-    <div class="comparison-wrapper" style="display:flex; justify-content:center; align-items:flex-start; gap:20px; flex-wrap:wrap;">
-
+    <div class="comparison-wrapper">
       <!-- 左侧 Baseline 按钮列 -->
-      <div class="baseline-bar" style="display:flex; flex-direction:column; gap:10px; width:110px;">
+      <div class="baseline-bar">
         <button class="baseline-btn active" data-model="EDSR">EDSR</button>
         <button class="baseline-btn" data-model="RDN">RDN</button>
         <button class="baseline-btn" data-model="ATD">ATD</button>
@@ -75,13 +74,13 @@
       </div>
 
       <!-- 右侧滑块容器 -->
-      <div style="flex:1; display:flex; justify-content:center;">
+      <div class="slider-area">
         <div id="slider-container"></div>
       </div>
     </div>
 
     <!-- 缩略图栏 -->
-    <div id="thumb-bar" class="thumb-bar" style="display:flex; justify-content:center; margin-top:15px; gap:10px; flex-wrap:wrap;"></div>
+    <div id="thumb-bar" class="thumb-bar"></div>
   </div>
 </section>
 
@@ -90,28 +89,68 @@
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
 <style>
-  .baseline-btn {
-    border: none;
-    background-color: #e5e9f2;
-    padding: 10px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.25s ease;
-    text-align: center;
-    font-weight: 600;
-    color: #333;
-  }
-  .baseline-btn:hover {
-    background-color: #d7dcf0;
-  }
-  .baseline-btn.active {
-    background-color: #3273dc;
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(50,115,220,0.3);
+  /* 总布局：水平居中排列，按钮在左侧，滑块居中 */
+  .comparison-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 垂直对齐按钮和滑块 */
+    gap: 25px; /* 按钮和滑块间距紧凑 */
+    flex-wrap: wrap; /* 小屏幕自动换行 */
+    margin-top: 20px;
   }
 
-  /* 缩略图样式 */
+  .baseline-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* 美化按钮样式 */
+  .baseline-btn {
+    border: none;
+    background: linear-gradient(180deg, #f5f7fa, #e4e8ee);
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    font-weight: 600;
+    color: #333;
+    min-width: 90px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .baseline-btn:hover {
+    background: linear-gradient(180deg, #eaf0f7, #d8dee6);
+    transform: translateY(-1px);
+  }
+  .baseline-btn.active {
+    background: linear-gradient(180deg, #3273dc, #265bb2);
+    color: #fff;
+    box-shadow: 0 3px 6px rgba(50,115,220,0.3);
+  }
+
+  .slider-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  #slider-container {
+    width: 100%;
+    max-width: 600px;
+    min-height: 350px; 
+  }
+
+  /* 缩略图样式优化 */
+  .thumb-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
   .thumb-bar img {
     width: 100px;
     height: 100px;
@@ -128,13 +167,6 @@
   .thumb-bar img:hover {
     border-color: #999;
   }
-
-  /* 给滑块一个固定高度防塌陷 */
-  #slider-container {
-    width: 100%;
-    max-width: 500px;
-    min-height: 350px;
-  }
 </style>
 
 <script>
@@ -148,13 +180,12 @@
 
     const container = document.getElementById('slider-container');
 
-    // 每次完全重建 Juxtapose 容器（防止旧实例缓存或清空时机错误）
+    // 每次完全重建 Juxtapose 容器
     container.innerHTML = '';
     const newDiv = document.createElement('div');
     newDiv.id = 'juxtapose-slider';
     container.appendChild(newDiv);
 
-    // 初始化 Juxtapose
     new juxtapose.JXSlider('#juxtapose-slider', [
         { src: lqPath, label: 'Zoomed LQ images', credit: '' },
         { src: hrPath, label: `${baseline} results`, credit: '' }
@@ -206,6 +237,7 @@
     });
   });
 </script>
+
 
 
 
