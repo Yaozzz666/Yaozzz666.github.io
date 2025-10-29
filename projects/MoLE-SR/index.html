@@ -62,7 +62,7 @@
 
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2> -->
+    <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
 
     <div class="comparison-wrapper">
       <!-- 左侧 Baseline 按钮列 -->
@@ -89,48 +89,50 @@
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
 <style>
-  /* 总布局：水平居中排列，按钮在左侧，滑块居中 */
+  /* 总布局：按钮 + 滑块 水平居中对齐 */
   .comparison-wrapper {
     display: flex;
     justify-content: center;
-    align-items: center; /* 垂直对齐按钮和滑块 */
-    gap: 25px; /* 按钮和滑块间距紧凑 */
-    flex-wrap: wrap; /* 小屏幕自动换行 */
-    margin-top: 20px;
+    align-items: center; 
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
   }
 
+  /* 按钮栏居中并紧凑 */
   .baseline-bar {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
   }
 
-  /* 美化按钮样式 */
+  /* 更精致按钮样式 */
   .baseline-btn {
     border: none;
-    background: linear-gradient(180deg, #f5f7fa, #e4e8ee);
-    padding: 8px 16px;
-    font-size: 14px;
+    background: linear-gradient(180deg, #f8f9fc, #e8ebf2);
+    padding: 6px 14px;
+    font-size: 13px;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 20px;
     transition: all 0.25s ease;
     font-weight: 600;
     color: #333;
-    min-width: 90px;
+    min-width: 80px;
     text-align: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
   .baseline-btn:hover {
-    background: linear-gradient(180deg, #eaf0f7, #d8dee6);
-    transform: translateY(-1px);
+    background: linear-gradient(180deg, #eaf0f9, #dde3ef);
+    transform: translateY(-0.5px);
   }
   .baseline-btn.active {
     background: linear-gradient(180deg, #3273dc, #265bb2);
     color: #fff;
-    box-shadow: 0 3px 6px rgba(50,115,220,0.3);
+    box-shadow: 0 3px 6px rgba(50,115,220,0.25);
   }
 
+  /* 滑块区域尺寸缩小 */
   .slider-area {
     flex: 1;
     display: flex;
@@ -139,24 +141,27 @@
 
   #slider-container {
     width: 100%;
-    max-width: 600px;
-    min-height: 350px; 
+    max-width: 450px; /* 缩小滑块宽度 */
+    min-height: 280px; /* 高度也缩小 */
+    margin: 0 auto;
   }
 
-  /* 缩略图样式优化 */
+  /* 缩略图栏居中 */
   .thumb-bar {
     display: flex;
     justify-content: center;
-    margin-top: 15px;
-    gap: 10px;
+    margin-top: 12px;
+    gap: 8px;
     flex-wrap: wrap;
   }
+
+  /* 缩略图尺寸缩小 */
   .thumb-bar img {
-    width: 100px;
-    height: 100px;
+    width: 80px; 
+    height: 80px;
     object-fit: cover;
     border: 2px solid transparent;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s ease;
   }
@@ -180,15 +185,16 @@
 
     const container = document.getElementById('slider-container');
 
-    // 每次完全重建 Juxtapose 容器
+    // 重新创建容器
     container.innerHTML = '';
     const newDiv = document.createElement('div');
     newDiv.id = 'juxtapose-slider';
     container.appendChild(newDiv);
 
+    // 初始化 Juxtapose
     new juxtapose.JXSlider('#juxtapose-slider', [
-        { src: lqPath, label: 'Zoomed LQ images', credit: '' },
-        { src: hrPath, label: `${baseline} results`, credit: '' }
+        { src: lqPath, label: 'Zoomed LQ', credit: '' },
+        { src: hrPath, label: `${baseline}`, credit: '' }
       ],
       {
         animate: true,
@@ -237,6 +243,7 @@
     });
   });
 </script>
+
 
 
 
