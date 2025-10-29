@@ -143,24 +143,26 @@
     const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
   
     const sliderEl = document.getElementById('juxtapose-slider');
-    sliderEl.innerHTML = ''; // 保留DOM，只清空内部
   
-    // 延迟一点点再初始化，确保DOM和资源准备好
-    setTimeout(() => {
-      new juxtapose.JXSlider('#juxtapose-slider',
-        [
-          { src: lqPath, label: 'Zoomed LQ images', credit: '' },
-          { src: hrPath, label: `${baseline} results`, credit: '' }
-        ],
-        {
-          animate: true,
-          showLabels: true,
-          showCredits: false,
-          startingPosition: '50%',
-          makeResponsive: true
-        }
-      );
-    }, 50);
+    // 移除所有子元素（保留容器本身）
+    while (sliderEl.firstChild) {
+      sliderEl.removeChild(sliderEl.firstChild);
+    }
+  
+    // 初始化 Juxtapose
+    new juxtapose.JXSlider('#juxtapose-slider',
+      [
+        { src: lqPath, label: 'Zoomed LQ images', credit: '' },
+        { src: hrPath, label: `${baseline} results`, credit: '' }
+      ],
+      {
+        animate: true,
+        showLabels: true,
+        showCredits: false,
+        startingPosition: '50%',
+        makeResponsive: true
+      }
+    );
   }
 
   function renderThumbnails(baseline) {
