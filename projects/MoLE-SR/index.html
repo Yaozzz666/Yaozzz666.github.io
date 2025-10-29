@@ -76,9 +76,7 @@
 
       <!-- 右侧滑块容器 -->
       <div style="flex:1; display:flex; justify-content:center;">
-        <div id="slider-container">
-          <div id="juxtapose-slider" style="width:100%; max-width:500px;"></div>
-        </div>
+        <div id="slider-container"></div>
       </div>
     </div>
 
@@ -92,7 +90,6 @@
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
 <style>
-  /* 按钮样式改进 */
   .baseline-btn {
     border: none;
     background-color: #e5e9f2;
@@ -131,6 +128,13 @@
   .thumb-bar img:hover {
     border-color: #999;
   }
+
+  /* 给滑块一个固定高度防塌陷 */
+  #slider-container {
+    width: 100%;
+    max-width: 500px;
+    min-height: 350px;
+  }
 </style>
 
 <script>
@@ -141,17 +145,17 @@
   function initSlider(baseline, caseName) {
     const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
     const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
-  
-    const sliderEl = document.getElementById('juxtapose-slider');
-  
-    // 移除所有子元素（保留容器本身）
-    while (sliderEl.firstChild) {
-      sliderEl.removeChild(sliderEl.firstChild);
-    }
-  
+
+    const container = document.getElementById('slider-container');
+
+    // 每次完全重建 Juxtapose 容器（防止旧实例缓存或清空时机错误）
+    container.innerHTML = '';
+    const newDiv = document.createElement('div');
+    newDiv.id = 'juxtapose-slider';
+    container.appendChild(newDiv);
+
     // 初始化 Juxtapose
-    new juxtapose.JXSlider('#juxtapose-slider',
-      [
+    new juxtapose.JXSlider('#juxtapose-slider', [
         { src: lqPath, label: 'Zoomed LQ images', credit: '' },
         { src: hrPath, label: `${baseline} results`, credit: '' }
       ],
@@ -171,7 +175,6 @@
 
     caseList.forEach(caseName => {
       const img = document.createElement('img');
-      // 修正路径命名
       img.src = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
       img.dataset.case = caseName;
 
@@ -196,7 +199,6 @@
       btn.addEventListener('click', () => {
         document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
         currentBaseline = btn.dataset.model;
         renderThumbnails(currentBaseline);
         initSlider(currentBaseline, currentCase);
@@ -204,6 +206,7 @@
     });
   });
 </script>
+
 
 
 
