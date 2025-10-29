@@ -64,19 +64,17 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
 
-    <div class="comparison-wrapper">
-      <!-- 左侧 Baseline 按钮列 -->
-      <div class="baseline-bar">
-        <button class="baseline-btn active" data-model="EDSR">EDSR</button>
-        <button class="baseline-btn" data-model="RDN">RDN</button>
-        <button class="baseline-btn" data-model="ATD">ATD</button>
-        <button class="baseline-btn" data-model="PFT">PFT</button>
-      </div>
+    <!-- 顶部按钮栏（横向居中） -->
+    <div class="baseline-bar-top">
+      <button class="baseline-btn active" data-model="EDSR">EDSR</button>
+      <button class="baseline-btn" data-model="RDN">RDN</button>
+      <button class="baseline-btn" data-model="ATD">ATD</button>
+      <button class="baseline-btn" data-model="PFT">PFT</button>
+    </div>
 
-      <!-- 右侧滑块容器 -->
-      <div class="slider-area">
-        <div id="slider-container"></div>
-      </div>
+    <!-- 滑块区域（独立居中） -->
+    <div class="slider-wrapper">
+      <div id="slider-container"></div>
     </div>
 
     <!-- 缩略图栏 -->
@@ -89,25 +87,16 @@
 <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 
 <style>
-  /* 总布局：按钮 + 滑块 水平居中对齐 */
-  .comparison-wrapper {
+  /* 顶部按钮栏居中排列 */
+  .baseline-bar-top {
     display: flex;
     justify-content: center;
-    align-items: center; 
-    gap: 20px;
+    gap: 8px;
+    margin-top: 10px;
     flex-wrap: wrap;
-    margin-top: 15px;
   }
 
-  /* 按钮栏居中并紧凑 */
-  .baseline-bar {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-  }
-
-  /* 更精致按钮样式 */
+  /* 按钮美化 */
   .baseline-btn {
     border: none;
     background: linear-gradient(180deg, #f8f9fc, #e8ebf2);
@@ -132,18 +121,27 @@
     box-shadow: 0 3px 6px rgba(50,115,220,0.25);
   }
 
-  /* 滑块区域尺寸缩小 */
-  .slider-area {
-    flex: 1;
+  /* 滑块区域：居中 + 正方形 */
+  .slider-wrapper {
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin-top: 15px;
   }
 
   #slider-container {
+    position: relative;
     width: 100%;
-    max-width: 300px; /* 缩小滑块宽度 */
-    min-height: 300px; /* 高度也缩小 */
-    margin: 0 auto;
+    max-width: 350px;
+    aspect-ratio: 1 / 1; /* 保证正方形比例 */
+  }
+
+  #juxtapose-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 
   /* 缩略图栏居中 */
@@ -155,9 +153,9 @@
     flex-wrap: wrap;
   }
 
-  /* 缩略图尺寸缩小 */
+  /* 缩略图样式 */
   .thumb-bar img {
-    width: 80px; 
+    width: 80px;
     height: 80px;
     object-fit: cover;
     border: 2px solid transparent;
@@ -184,26 +182,22 @@
     const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
 
     const container = document.getElementById('slider-container');
-
-    // 重新创建容器
     container.innerHTML = '';
+
     const newDiv = document.createElement('div');
     newDiv.id = 'juxtapose-slider';
     container.appendChild(newDiv);
 
-    // 初始化 Juxtapose
     new juxtapose.JXSlider('#juxtapose-slider', [
-        { src: lqPath, label: 'Baseline', credit: '' },
-        { src: hrPath, label: `Using MoLE-SR`, credit: '' }
-      ],
-      {
-        animate: true,
-        showLabels: true,
-        showCredits: false,
-        startingPosition: '50%',
-        makeResponsive: true
-      }
-    );
+      { src: lqPath, label: 'Baseline', credit: '' },
+      { src: hrPath, label: 'Using MoLE-SR', credit: '' }
+    ], {
+      animate: true,
+      showLabels: true,
+      showCredits: false,
+      startingPosition: '50%',
+      makeResponsive: true
+    });
   }
 
   function renderThumbnails(baseline) {
@@ -243,6 +237,7 @@
     });
   });
 </script>
+
 
 
 
