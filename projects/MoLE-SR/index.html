@@ -160,15 +160,18 @@
     }
   }
 
-  /* 缩略图栏 */
+  /* 缩略图栏限制最大宽度，独立调整 */
   .thumb-bar {
     display: flex;
     justify-content: center;
     margin-top: 14px;
     gap: 8px;
     flex-wrap: wrap;
+    max-width: 600px; /* 缩略图栏可以更宽或更窄 */
+    margin-left: auto;
+    margin-right: auto;
   }
-
+  
   .thumb-bar img {
     width: 150px;
     height: 150px;
