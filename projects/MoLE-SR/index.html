@@ -74,7 +74,9 @@
 
     <!-- 自适应滑块区域 -->
     <div class="slider-wrapper">
-      <div id="slider-container"></div>
+      <div class="slider-limit">
+        <div id="slider-container"></div>
+      </div>
     </div>
 
     <!-- 缩略图栏 -->
@@ -129,12 +131,16 @@
     margin-top: 20px;
     width: 100%;
   }
-
+  .slider-limit {
+    max-width: 600px;
+    width: 100%; /* 让里面的 slider-container 相对这个容器全宽 */
+    margin: 0 auto;
+  }
+  
   #slider-container {
     width: 100%;
-    max-width: 800px; /* 桌面端最大宽度 */
-    aspect-ratio: 16 / 9; /* 默认比例，自动自适应 */
   }
+
 
   #juxtapose-slider {
     width: 100%;
@@ -145,7 +151,7 @@
   @media (max-width: 768px) {
     #slider-container {
       max-width: 95vw;
-      aspect-ratio: 4/3;
+
     }
     .baseline-btn {
       min-width: 80px;
