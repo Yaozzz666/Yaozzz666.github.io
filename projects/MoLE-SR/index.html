@@ -29,7 +29,14 @@
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
     <!-- 在这里加自己的样式，放 CSS 引入的最后，这样优先级最高 -->
-
+  <style>
+    /* 只针对 Visual Results 那两张图 */
+    .visual-results img {
+      max-width: 1200px;
+      width: 100%;
+      height: auto;
+    }
+  </style>
 
 </head>
 <body>
@@ -302,22 +309,25 @@
     <h2 class="title is-3 has-text-centered">Method</h2>
     
     <!-- Overview Image -->
-    <figure class="image is-3by2">
-      <img src="./static/images/overview.png" alt="Overview of the method">
-    </figure>
-
-    <!-- Description -->
-    <div class="content has-text-justified">
-      <p>
-        We propose MoLE-SR, a model-agnostic and representation-driven framework that enables rapid few-shot adaptation to unseen domains while preserving strong in-domain reconstruction.
-        As shown in the figure, our framework consists of two aspects: representation-driven LoRA experts and representation-driven MoE router. Specifically, we train LoRA experts across multiple domains to 
-        capture each domain’s mean representation. In out-of-domain (OOD) scenarios, our representation-driven approach needs only a few samples from the unseen domain: we infer similarity 
-        between OOD samples' representation and in-domain centers in feature space, and combine experts according to inferred similarity to adapt to the target domain.
-        We learn an efficient router from a few OOD samples to perform dynamic composition, thus realizing representation-guided adaptation. A layer-wise router is further designed to compose 
-        LoRA experts at fine granularity, enabling more flexible expert combination and yielding superior performance. By decoupling representation storage from selection and combination, 
-        MoLE-SR prevents catastrophic forgetting, enables expert reuse, and supports efficient OOD adaptation without updating the backbone or existing experts.
-      </p>
-
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <figure class="image is-3by2">
+          <img src="./static/images/overview.png" alt="Overview of the method">
+        </figure>
+    
+        <!-- Description -->
+        <div class="content has-text-justified">
+          <p>
+            We propose MoLE-SR, a model-agnostic and representation-driven framework that enables rapid few-shot adaptation to unseen domains while preserving strong in-domain reconstruction.
+            As shown in the figure, our framework consists of two aspects: representation-driven LoRA experts and representation-driven MoE router. Specifically, we train LoRA experts across multiple domains to 
+            capture each domain’s mean representation. In out-of-domain (OOD) scenarios, our representation-driven approach needs only a few samples from the unseen domain: we infer similarity 
+            between OOD samples' representation and in-domain centers in feature space, and combine experts according to inferred similarity to adapt to the target domain.
+            We learn an efficient router from a few OOD samples to perform dynamic composition, thus realizing representation-guided adaptation. A layer-wise router is further designed to compose 
+            LoRA experts at fine granularity, enabling more flexible expert combination and yielding superior performance. By decoupling representation storage from selection and combination, 
+            MoLE-SR prevents catastrophic forgetting, enables expert reuse, and supports efficient OOD adaptation without updating the backbone or existing experts.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
