@@ -2,395 +2,323 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution.">
-  <meta name="keywords" content="Image super-resolution, Low-rank adaptation, Mixture of experts, Few-shot domain adaptation, Parameter-efficient fine-tuning.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MoLE-SR: Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution.">
+    <meta name="keywords" content="Image super-resolution, Low-rank adaptation, Mixture of experts, Few-shot domain adaptation, Parameter-efficient fine-tuning.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MoLE-SR: Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution</title>
 
-  <!-- 字体 -->
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
-  <!-- 样式 -->
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
 
-  <!-- 网站图标 -->
-  <link rel="icon" href="./static/images/icon.svg">
+    <link rel="icon" href="./static/images/icon.svg">
 
-  <!-- JS 库 -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-    <!-- 在这里加自己的样式，放 CSS 引入的最后，这样优先级最高 -->
-  <style>
-    /* 只针对 Visual Results 那两张图 */
-    .visual-results img {
-      max-width: 1400px;
-      width: 100%;
-      height: auto;
-    }
-  </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
+    <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+
+    <style>
+        /* 只针对 Visual Results 那两张图 */
+        .visual-results img {
+            max-width: 1400px;
+            width: 100%;
+            height: auto;
+        }
+
+        /* ****************************************************** */
+        /* 新增或修改的样式 */
+        /* ****************************************************** */
+
+        /* 交互模块的容器，比 is-max-desktop 更宽 */
+        .interactive-container {
+            max-width: 1200px; /* 自定义一个更大的宽度 */
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 4个并列滑块的容器 */
+        .sliders-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 列平均分配 */
+            gap: 15px; /* 滑块之间的间距 */
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* 单个滑块的容器 */
+        .slider-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slider-item-label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4a4a4a;
+        }
+
+        /* 确保 Juxtapose 占据 100% 宽度 */
+        .juxtapose {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 1024px) {
+            .sliders-grid {
+                grid-template-columns: repeat(2, 1fr); /* 中等屏幕 2 列 */
+                gap: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            .sliders-grid {
+                grid-template-columns: 1fr; /* 小屏幕 1 列 */
+                gap: 20px;
+            }
+            .interactive-container {
+                width: 95%;
+            }
+        }
+
+        /* 缩略图栏 */
+        .thumb-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 10px;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .thumb-bar img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumb-bar img.active {
+            border-color: #3273dc;
+            transform: scale(1.08);
+            box-shadow: 0 6px 10px rgba(50, 115, 220, 0.3);
+        }
+
+        .thumb-bar img:hover {
+            border-color: #999;
+        }
+
+        /* 移除原有的按钮样式 */
+        .baseline-bar-top { display: none; } 
+    </style>
 
 </head>
+
 <body>
 <section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">MoLE-SR: Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution</h1>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              Yao Zhang<sup>1</sup>,</span>
-            <span class="author-block">
-              Zhengxue Cheng<sup>1</sup>,</span>
-            <span class="author-block">
-              Xinning Chai<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Li Song<sup>1</sup>,
-            </span>
-          </div>
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>Shanghai Jiao Tong University</span>
-          </div>
-          
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href="https://github.com/google/nerfies"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title">MoLE-SR: Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution</h1>
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block">Yao Zhang<sup>1</sup>,</span>
+                        <span class="author-block">Zhengxue Cheng<sup>1</sup>,</span>
+                        <span class="author-block">Xinning Chai<sup>1</sup>,</span>
+                        <span class="author-block">Li Song<sup>1</sup>,</span>
+                    </div>
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block"><sup>1</sup>Shanghai Jiao Tong University</span>
+                    </div>
+                    <div class="column has-text-centered">
+                        <div class="publication-links">
+                            <span class="link-block">
+                                <a href="https://github.com/google/nerfies" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon"><i class="fab fa-github"></i></span>
+                                    <span>Code</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </section>
 
 <section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
-
-    <!-- 顶部按钮栏 -->
-    <div class="baseline-bar-top">
-      <button class="baseline-btn active" data-model="EDSR">EDSR</button>
-      <button class="baseline-btn" data-model="RDN">RDN</button>
-      <button class="baseline-btn" data-model="ATD">ATD</button>
-      <button class="baseline-btn" data-model="PFT">PFT</button>
+    <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+                <h2 class="title is-3">Abstract</h2>
+                <div class="content has-text-justified">
+                    <p>
+                        Most image super-resolution (SR) models trained on natural images achieve strong performance on benchmark datasets. However, their performance degrades when applied to unseen data whose semantic content or degradation types differ substantially. A common remedy is class-driven adaptation, which fully fine-tunes model per manually defined class with either a semantic category or a degradation type, but this approach is typically training-expensive, data-hungry and often causes catastrophic forgetting of previously learned domains. To address these challenges, we propose MoLE-SR (Mixture of LoRA Experts for Super-Resolution), a representation-driven universal SR framework with high training efficiency and data efficiency. MoLE-SR realizes few-shot adaptation to unseen domains while preserving performance on seen domains, by adopting a decoupled two-stage learning strategy. Specifically, in the first stage, a shared SR backbone is combined with multiple lightweight LoRA experts, each trained separately on representative in-training domains to learn domain-specific representation, yielding notable performance gains with only a small fraction (~1.5\%) of parameters updated. In the second stage, given only a few samples from an out-of-training domain, all experts remain fixed while an efficient layer-wise router is optimized to dynamically select and compose experts under the guidance of samples' representations, enabling effective adaptation with negligible (~1.9\%) additional parameter overhead. Extensive experiments across diverse SR architectures and out-of-training domains demonstrate that MoLE-SR achieves an average PSNR improvement of 0.79 dB in in-training domain performance and 0.93 dB on out-of-training domain data under few-shot settings with minimal extra data and computation.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- 自适应滑块区域 -->
-    <div class="slider-wrapper">
-      <div class="slider-limit">
-        <div id="slider-container"></div>
-      </div>
-    </div>
-
-    <!-- 缩略图栏 -->
-    <div id="thumb-bar" class="thumb-bar"></div>
-  </div>
 </section>
 
-<!-- JuxtaposeJS -->
-<link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
-<script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+                <h2 class="title is-3 has-text-centered">Method</h2>
+                <figure class="image is-3by2">
+                    <img src="./static/images/overview.png" alt="Overview of the method">
+                </figure>
 
-<style>
-  /* 顶部按钮栏 */
-  .baseline-bar-top {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-  }
+                <div class="content has-text-justified">
+                    <p>
+                        We propose MoLE-SR, a model-agnostic and representation-driven framework that enables rapid few-shot adaptation to unseen domains while preserving strong in-domain reconstruction. As shown in the figure, our framework consists of two aspects: representation-driven LoRA experts and representation-driven MoE router. Specifically, we train LoRA experts across multiple domains to capture each domain’s mean representation. In out-of-domain (OOD) scenarios, our representation-driven approach needs only a few samples from the unseen domain: we infer similarity between OOD samples' representation and in-domain centers in feature space, and combine experts according to inferred similarity to adapt to the target domain. We learn an efficient router from a few OOD samples to perform dynamic composition, thus realizing representation-guided adaptation. A layer-wise router is further designed to compose LoRA experts at fine granularity, enabling more flexible expert combination and yielding superior performance. By decoupling representation storage from selection and combination, MoLE-SR prevents catastrophic forgetting, enables expert reuse, and supports efficient OOD adaptation without updating the backbone or existing experts.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section" style="padding-top: 0; padding-bottom: 0;">
+    <div class="interactive-container">
+        <h2 class="title is-3 has-text-centered">Interactive Super-Resolution Comparison</h2>
 
-  .baseline-btn {
-    border: none;
-    background: linear-gradient(180deg, #f9fafc, #e8ebf2);
-    padding: 8px 18px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 24px;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: #333;
-    min-width: 100px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  }
+        <div id="sliders-grid-container" class="sliders-grid">
+            </div>
 
-  .baseline-btn:hover {
-    background: linear-gradient(180deg, #eef3ff, #d5dcf5);
-    transform: translateY(-1px);
-  }
+        <div id="thumb-bar" class="thumb-bar"></div>
+    </div>
+</section>
+<section class="section visual-results">
+    <div class="container">
+        <h2 class="title is-3 has-text-centered">Visual Results</h2>
 
-  .baseline-btn.active {
-    background: linear-gradient(180deg, #3273dc, #2758b8);
-    color: #fff;
-    box-shadow: 0 3px 6px rgba(50, 115, 220, 0.25);
-  }
+        <div class="content">
+            <h3 class="title is-4 has-text-centered">In-domain Datasets</h3>
+            <figure class="image">
+                <img src="./static/images/in_domain2.png" alt="In-domain test set visualization">
+            </figure>
+        </div>
 
-  /* 滑块容器自适应、居中 */
-  .slider-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-  }
-  .slider-limit {
-    max-width: 400px;
-    width: 100%; /* 让里面的 slider-container 相对这个容器全宽 */
-    margin: 0 auto;
-  }
-  
-  #slider-container {
-    width: 100%;
-  }
-
-
-  #juxtapose-slider {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* 响应式适配 */
-  @media (max-width: 768px) {
-    #slider-container {
-      max-width: 95vw;
-
-    }
-    .baseline-btn {
-      min-width: 80px;
-      font-size: 13px;
-      padding: 6px 14px;
-    }
-  }
-
-  /* 缩略图栏限制最大宽度，独立调整 */
-  .thumb-bar {
-    display: flex;
-    justify-content: center;
-    margin-top: 14px;
-    gap: 8px;
-    flex-wrap: wrap;
-    max-width: 800px; /* 缩略图栏可以更宽或更窄 */
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .thumb-bar img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: 2px solid transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-
-  .thumb-bar img.active {
-    border-color: #3273dc;
-    transform: scale(1.05);
-  }
-
-  .thumb-bar img:hover {
-    border-color: #999;
-  }
-</style>
+        <div class="content">
+            <h3 class="title is-4 has-text-centered">Out-of-domain Datasets</h3>
+            <figure class="image">
+                <img src="./static/images/out_of_domain2.png" alt="Out-of-domain test set visualization">
+            </figure>
+        </div>
+    </div>
+</section>
+<footer class="footer">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="content">
+                    <p>
+                        This website is licensed under a <a rel="license"
+                            href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                            Commons Attribution-ShareAlike 4.0 International License</a>.
+                    </p>
+                    <p>
+                        Website adapted from the following <a href="https://github.com/nerfies/nerfies.github.io">source code</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script>
-  let currentBaseline = 'EDSR';
-  let currentCase = 'case1';
-  const caseList = ['case1', 'case2', 'case3', 'case4'];
+    let currentCase = 'case1';
+    const caseList = ['case1', 'case2', 'case3', 'case4'];
+    // 定义所有的基线模型
+    const allBaselines = ['EDSR', 'RDN', 'ATD', 'PFT'];
 
-  function initSlider(baseline, caseName) {
-    const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
-    const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
+    function initSliders(caseName) {
+        const container = document.getElementById('sliders-grid-container');
+        container.innerHTML = ''; // 清空之前的滑块
 
-    const container = document.getElementById('slider-container');
-    container.innerHTML = '';
+        allBaselines.forEach(baseline => {
+            const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
+            const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
 
-    const newDiv = document.createElement('div');
-    newDiv.id = 'juxtapose-slider';
-    container.appendChild(newDiv);
+            // 1. 创建单个滑块容器
+            const sliderItem = document.createElement('div');
+            sliderItem.classList.add('slider-item');
 
-    new juxtapose.JXSlider('#juxtapose-slider', [
-      { src: lqPath, label: 'Baseline', credit: '' },
-      { src: hrPath, label: 'Using MoLE-SR', credit: '' }
-    ], {
-      animate: true,
-      showLabels: true,
-      showCredits: false,
-      startingPosition: '50%',
-      makeResponsive: true
+            // 2. 添加模型标签
+            const label = document.createElement('div');
+            label.classList.add('slider-item-label');
+            label.textContent = baseline; // 标签显示模型名称
+            sliderItem.appendChild(label);
+
+            // 3. 添加 Juxtapose 容器
+            const newDiv = document.createElement('div');
+            newDiv.className = 'juxtapose'; // 使用类名让 Juxtapose 库去查找并初始化
+            newDiv.setAttribute('data-startingposition', '50%');
+            newDiv.setAttribute('data-animate', 'true');
+            newDiv.setAttribute('data-make-responsive', 'true');
+            newDiv.innerHTML = `
+                <img src="${lqPath}" data-label="Baseline">
+                <img src="${hrPath}" data-label="Using MoLE-SR">
+            `;
+            sliderItem.appendChild(newDiv);
+            container.appendChild(sliderItem);
+        });
+
+        // JuxtaposeJS 需要在 DOM 元素创建后重新初始化所有滑块
+        Juxtapose.scanPage(); 
+    }
+
+    function renderThumbnails() {
+        const container = document.getElementById('thumb-bar');
+        container.innerHTML = '';
+
+        // 使用第一个 baseline (EDSR) 的图片作为缩略图
+        const baselineForThumbs = 'EDSR'; 
+
+        caseList.forEach(caseName => {
+            // 使用 'before' 图作为缩略图
+            const img = document.createElement('img');
+            img.src = `./static/images/${baselineForThumbs}/before/${baselineForThumbs}_${caseName}_before.png`;
+            img.dataset.case = caseName;
+            img.alt = `Thumbnail for ${caseName}`;
+
+            if (caseName === currentCase) img.classList.add('active');
+
+            img.addEventListener('click', () => {
+                currentCase = caseName;
+                document.querySelectorAll('#thumb-bar img').forEach(t => t.classList.remove('active'));
+                img.classList.add('active');
+                initSliders(currentCase); // 只需要传入 caseName
+            });
+
+            container.appendChild(img);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderThumbnails();
+        initSliders(currentCase);
     });
-  }
-
-  function renderThumbnails(baseline) {
-    const container = document.getElementById('thumb-bar');
-    container.innerHTML = '';
-
-    caseList.forEach(caseName => {
-      const img = document.createElement('img');
-      img.src = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
-      img.dataset.case = caseName;
-
-      if (caseName === currentCase) img.classList.add('active');
-
-      img.addEventListener('click', () => {
-        currentCase = caseName;
-        document.querySelectorAll('#thumb-bar img').forEach(t => t.classList.remove('active'));
-        img.classList.add('active');
-        initSlider(currentBaseline, currentCase);
-      });
-
-      container.appendChild(img);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    renderThumbnails(currentBaseline);
-    initSlider(currentBaseline, currentCase);
-
-    document.querySelectorAll('.baseline-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentBaseline = btn.dataset.model;
-        renderThumbnails(currentBaseline);
-        initSlider(currentBaseline, currentCase);
-      });
-    });
-  });
 </script>
-
-
-
-
-
-
-
-
-  
-<section class="section">
-  <div class="container is-max-desktop">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Most image super-resolution (SR) models trained on natural images achieve strong performance on benchmark datasets. However, their performance degrades when applied to unseen data 
-            whose semantic content or degradation types differ substantially. A common remedy is class-driven adaptation, which fully fine-tunes model per manually defined class with either a 
-            semantic category or a degradation type, but this approach is typically training-expensive, data-hungry and often causes catastrophic forgetting of previously learned domains.
-            To address these challenges, we propose MoLE-SR (Mixture of LoRA Experts for Super-Resolution), a representation-driven universal SR framework with high training efficiency and data 
-            efficiency. MoLE-SR realizes few-shot adaptation to unseen domains while preserving performance on seen domains, by adopting a decoupled two-stage learning strategy. Specifically, 
-            in the first stage, a shared SR backbone is combined with multiple lightweight LoRA experts, each trained separately on representative in-training domains to learn domain-specific 
-            representation, yielding notable performance gains with only a small fraction (~1.5\%) of parameters updated. In the second stage, given only a few samples from an out-of-training 
-            domain, all experts remain fixed while an efficient layer-wise router is optimized to dynamically select and compose experts under the guidance of samples' representations, enabling 
-            effective adaptation with negligible (~1.9\%) additional parameter overhead.
-            Extensive experiments across diverse SR architectures and out-of-training domains demonstrate that MoLE-SR achieves an average PSNR improvement of 0.79 dB in in-training domain 
-            performance and 0.93 dB on out-of-training domain data under few-shot settings with minimal extra data and computation.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-
-</section>
-
-  <!-- Method -->
-<section class="section">
-  <div class="container is-max-desktop">    
-    <!-- Overview Image -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">Method</h2>
-        <figure class="image is-3by2">
-          <img src="./static/images/overview.png" alt="Overview of the method">
-        </figure>
-    
-        <!-- Description -->
-        <div class="content has-text-justified">
-          <p>
-            We propose MoLE-SR, a model-agnostic and representation-driven framework that enables rapid few-shot adaptation to unseen domains while preserving strong in-domain reconstruction.
-            As shown in the figure, our framework consists of two aspects: representation-driven LoRA experts and representation-driven MoE router. Specifically, we train LoRA experts across multiple domains to 
-            capture each domain’s mean representation. In out-of-domain (OOD) scenarios, our representation-driven approach needs only a few samples from the unseen domain: we infer similarity 
-            between OOD samples' representation and in-domain centers in feature space, and combine experts according to inferred similarity to adapt to the target domain.
-            We learn an efficient router from a few OOD samples to perform dynamic composition, thus realizing representation-guided adaptation. A layer-wise router is further designed to compose 
-            LoRA experts at fine granularity, enabling more flexible expert combination and yielding superior performance. By decoupling representation storage from selection and combination, 
-            MoLE-SR prevents catastrophic forgetting, enables expert reuse, and supports efficient OOD adaptation without updating the backbone or existing experts.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--/ Method -->
-
-
-<!-- Visual Results -->
-<section class="section visual-results">
-  <div class="container">
-    <h2 class="title is-3 has-text-centered">Visual Results</h2>
-
-    <!-- In-domain Test Sets -->
-    <div class="content">
-      <h3 class="title is-4 has-text-centered">In-domain Datasets</h3>
-      <figure class="image">
-        <img src="./static/images/in_domain2.png" alt="In-domain test set visualization">
-      </figure>
-    </div>
-
-    <!-- Out-of-domain Test Sets -->
-    <div class="content">
-      <h3 class="title is-4 has-text-centered">Out-of-domain Datasets</h3>
-      <figure class="image">
-        <img src="./static/images/out_of_domain2.png" alt="Out-of-domain test set visualization">
-      </figure>
-    </div>
-
-  </div>
-</section>
-
-
-
-<footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            Website adapted from the following <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
 
 </body>
 </html>
