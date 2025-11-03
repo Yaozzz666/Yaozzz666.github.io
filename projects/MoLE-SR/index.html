@@ -140,7 +140,7 @@
                 <div class="column has-text-centered">
                     <h1 class="title is-1 publication-title">MoLE-SR: Mixture of LoRA Experts for Universal and Efficient Image Super-Resolution</h1>
                     <div class="is-size-5 publication-authors">
-                        <span class="author-block">Yao Zhang1<sup>1</sup>,</span>
+                        <span class="author-block">Yao Zhang<sup>1</sup>,</span>
                         <span class="author-block">Zhengxue Cheng<sup>1</sup>,</span>
                         <span class="author-block">Xinning Chai<sup>1</sup>,</span>
                         <span class="author-block">Li Song<sup>1</sup>,</span>
@@ -253,25 +253,22 @@
 
     function initSliders(caseName) {
         const container = document.getElementById('sliders-grid-container');
-        container.innerHTML = ''; // 清空之前的滑块
-
+        container.innerHTML = '';
+    
         allBaselines.forEach(baseline => {
             const lqPath = `./static/images/${baseline}/before/${baseline}_${caseName}_before.png`;
             const hrPath = `./static/images/${baseline}/after/${baseline}_${caseName}_after.png`;
-
-            // 1. 创建单个滑块容器
+    
             const sliderItem = document.createElement('div');
             sliderItem.classList.add('slider-item');
-
-            // 2. 添加模型标签
+    
             const label = document.createElement('div');
             label.classList.add('slider-item-label');
-            label.textContent = baseline; // 标签显示模型名称
+            label.textContent = baseline;
             sliderItem.appendChild(label);
-
-            // 3. 添加 Juxtapose 容器
+    
             const newDiv = document.createElement('div');
-            newDiv.className = 'juxtapose'; // 使用类名让 Juxtapose 库去查找并初始化
+            newDiv.className = 'juxtapose';
             newDiv.setAttribute('data-startingposition', '50%');
             newDiv.setAttribute('data-animate', 'true');
             newDiv.setAttribute('data-make-responsive', 'true');
@@ -282,9 +279,11 @@
             sliderItem.appendChild(newDiv);
             container.appendChild(sliderItem);
         });
-
-        // JuxtaposeJS 需要在 DOM 元素创建后重新初始化所有滑块
-        Juxtapose.scanPage(); 
+    
+        // 注意这里用小写 juxtpose
+        if (window.juxtapose) {
+            juxtapose.scanPage();
+        }
     }
 
     function renderThumbnails() {
